@@ -1,1 +1,1 @@
-export * from "./repositoriesActionCreators";
+export * as actionCreators from "./repositoriesActionCreators";
