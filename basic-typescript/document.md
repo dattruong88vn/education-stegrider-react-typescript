@@ -40,3 +40,27 @@ interface ChildProps = {
     children: React.ReactNode; // version 18 require với React.FC<>
 }
 ```
+
+#### Event
+
+Khi thao tác với Event, nếu khai báo callback function inline (ngay trong JSX), typescript sẽ tự động khai báo kiểu dữ liệu của tham số `event`.
+
+```
+<input onChange={e => console.log(e.target.value)}/>
+```
+
+Trong trường hợp khai báo một function cụ thể nằm bên ngoài JSX, chúng ta phải tự thêm kiểu dữ liệu cho `event`.
+
+```
+const onChange = (event: <EventType>) => {}
+```
+
+Để xác định được kiểu dữ liệu, chúng ta không thể dùng trí nhớ để nhớ hết các kiểu dữ liệu của các event khác nhau. Một trick nhỏ cho các bạn để lấy được kiểu dữ liệu:
+
+- Viết inline function với tham số e.
+- Hover vào tham số e, visual studio code sẽ hiển thị kiểu dữ liệu của event đó
+- Copy và paste vào function.
+
+```
+const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {}
+```

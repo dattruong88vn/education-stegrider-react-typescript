@@ -1,12 +1,11 @@
 import ReactDOM from "react-dom/client";
-
-import UserSearch from "./state/UserSearch";
+import ChangeEvent from "./events/ChangeEvent";
 
 const App = () => {
   return (
     <div>
       <h1>Hi there, this is my app!</h1>
-      <UserSearch />
+      <ChangeEvent />
     </div>
   );
 };
