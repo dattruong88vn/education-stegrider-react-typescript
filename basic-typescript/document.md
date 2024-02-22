@@ -31,3 +31,12 @@ export const ChildAsComponent: React.FC<ChildProps> = ({ color }) => {...}
 console.log(Child.displayName); // error
 console.log(ChildAsFC.displayName);
 ```
+
+- Đối với React có version < 18, sử dụng cách thứ hai còn giúp chúng ta không phải khai báo prop `children`.
+
+```
+interface ChildProps = {
+    color: string;
+    children: React.ReactNode; // version 18 require với React.FC<>
+}
+```
