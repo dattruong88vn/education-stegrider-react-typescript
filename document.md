@@ -64,3 +64,7 @@ const onChange = (event: <EventType>) => {}
 ```
 const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {}
 ```
+
+#### Redux
+
+API search list package của npm: `https://registry.npmjs.org/-/v1/search?text=react`
