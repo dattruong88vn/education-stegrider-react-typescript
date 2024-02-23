@@ -38,3 +38,8 @@ Cách 2: call api về BE, BE tìm package, tải về và cache, ko lưu ở se
 Cách 3: FE tìm package, viết plugin để tải về các file riêng lẻ từ npm.
 
 Ngoài ra, có một vấn đề là `Webpack` không thể hoạt động trên browser, trong khi `babel` thì có thể. Sử dụng `ESBuild` để thay thế cho cả `babel` và `webpack`.
+
+#### Thư viện ESBuild
+
+1. Cài đặt: `npm i esbuild-wasm`.
+2. Copy file `esbuild.wasm` từ node-modules vào thư mục public. Mục đích để có thể sử dụng esbuild trên browser.
