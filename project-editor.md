@@ -39,7 +39,43 @@ Cách 3: FE tìm package, viết plugin để tải về các file riêng lẻ t
 
 Ngoài ra, có một vấn đề là `Webpack` không thể hoạt động trên browser, trong khi `babel` thì có thể. Sử dụng `ESBuild` để thay thế cho cả `babel` và `webpack`.
 
-#### Thư viện ESBuild
+#### Tiến hành Transpile và Bunble trên Browser
+
+###### Thư viện ESBUILD
 
 1. Cài đặt: `npm i esbuild-wasm`.
 2. Copy file `esbuild.wasm` từ node-modules vào thư mục public. Mục đích để có thể sử dụng esbuild trên browser.
+3. Cấu hình theo file `index.tsx` để có thể transpile được js code (sử dụng method `transform`).
+
+###### Bundle trên Browser
+
+Nếu trong code có từ khoá `import`, `export` hay `require`, mặc định thư viện `esbuild` sẽ tiến hành tìm các module đó trong file system của máy tính.
+
+Tuy nhiên, từ browser chúng ta không thể truy xuất vào các file này. Thay vào đó, chúng ta sẽ request lên `npm registry` để lấy url của các thư viện tương ứng, sau đó gửi các url này cho `esbuild` (thay cho file systems).
+
+Các url trực tiếp đến mã nguồn các thư viện trên `npm` chúng ta không thể sử dụng để tải về vì bị chặn CORS từ `npm`.
+
+###### Website: `https://www.unpkg.com/`
+
+Thay vào đó, để có thể tải các file này chúng ta sử dụng một website thay thế đó là `https://www.unpkg.com/`. Đây là nơi có thể tải tất cả các file của tất cả các thư viện có trên npm.
+
+Viết một `plugin` cho thư viện esbuild để override lại default behavior của nó, khi tìm thấy keyword `import` hoặc `require` thay vì tìm trong file system thì chung ta sẽ cung cấp url cho nó.
+
+Mỗi plugin sẽ return về object gồm `name`: tên và `setup`: function. Function này nhận vào 1 tham số build.
+
+Chúng ta cần thêm 2 method `onResolve` và `onLoad` vào tham số `build` để override lại behavior của thư viện.
+
+- `onResolve`: xác định vị trí của file.
+- `onLoad`: tải content file.
+
+Khi gặp từ khoá `import` hoặc `require` cả 2 method trên đều tự động được gọi lại, quá trình này lặp đi lặp lại đến khi hết import.
+
+Tham số `build` có thể config nhiều method `onResolve` cũng như `onLoad`, tham số đầu tiên của 2 method này là một object, object này có nhiệm vụ phân loại các file được apply với method này. Các key thông thường như sau:
+
+- `filter` với value là Regex. Mục đích của filter chính là phân loại các file matching với các Regex để xử lý theo các method `onResolve` hoặc `onLoad` tương ứng.
+
+Ví dụ: import thư viện react sẽ khác với import thư viện css. Import file internal khác với import file external.
+
+- `namespace`: có value là string, method có config thuộc tính `namespace` chỉ được áp dụng với các file được đánh dấu với `namespace` tương ứng.
+
+Trong method `onResolve`, sau khi tìm thấy file nó sẽ return về object để mô tả file này với các thông số như `{ path: "", namespace: ""}`. Thông số `namespace` này sẽ được check lại ở method `onLoad`.

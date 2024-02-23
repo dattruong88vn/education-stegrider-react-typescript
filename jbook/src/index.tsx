@@ -1,6 +1,7 @@
 import * as esbuild from "esbuild-wasm";
 import { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom/client";
+import { unpkgPathPlugin } from "./plugins/unpkg-path-plugin";
 
 const App = () => {
   const [input, setInput] = useState("");
@@ -22,12 +23,19 @@ const App = () => {
   const handleTranspile = async () => {
     if (!serviceRef.current) return;
 
-    const data = await serviceRef.current.transform(input, {
-      loader: "jsx",
-      target: "es2015",
+    // const data = await serviceRef.current.transform(input, {
+    //   loader: "jsx",
+    //   target: "es2015",
+    // });
+
+    const data = await serviceRef.current.build({
+      entryPoints: ["index.js"],
+      bundle: true,
+      write: false,
+      plugins: [unpkgPathPlugin()],
     });
 
-    setCode(data.code);
+    setCode(data.outputFiles[0].text);
   };
 
   return (
