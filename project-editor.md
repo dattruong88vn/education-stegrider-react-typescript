@@ -130,3 +130,36 @@ define: {
     global: "window",
 },
 ```
+
+4. Caching
+
+Để tránh lặp đi lặp lại việc gửi request lên `unpkg` để tải các package. Chúng ta tiến hành caching nội dung của các file tải.
+
+Do dung lượng của localStorage có giới hạn nên giải pháp là sử dụng `indexedDB`. Package `localForage` giúp chúng ta làm việc với `indexedDB` thông qua các api `get`, `set` tương đồng với localStorage.
+
+IndexedDB lưu trữ dữ liệu theo từng cặp key-value, để đảm bảo tính unique của các file cần tải:
+
+- key: args.path
+- value: object trả về từ method onLoad
+
+Một số api cơ bản của package:
+
+- Tạo instance của indexedDB:
+
+```
+const fileCached = localforage.createInstance({
+  name: "package",
+});
+```
+
+- Lấy data từ indexedDB:
+
+```
+const dataCached = await fileCached.getItem(args.path);
+```
+
+- Ghi data vào indexedDB:
+
+```
+fileCached.setItem(args.path, data);
+```
