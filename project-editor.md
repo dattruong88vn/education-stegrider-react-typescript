@@ -163,3 +163,42 @@ const dataCached = await fileCached.getItem(args.path);
 ```
 fileCached.setItem(args.path, data);
 ```
+
+###### Bundle CSS file
+
+1. Trong method `onLoad`, sau khi tải được content của file chúng ta sẽ return về một object, trong đó có key `loader`.
+
+Key này sẽ thông báo cho ESbuild biết được content bên trong file đó là Javascript, CSS, JSON.... Do đó, chúng ta có thể dynamic `loader` dựa vào phần mở rộng của file tải về, cụ thể ở đây là `args.path`: đường dẫn file.
+
+```
+const loader = args.path.match(/.css$/) ? "css" : "jsx";
+...
+return {
+    loader,
+    ...
+}
+```
+
+2. Khi config loader là css, thư viện ESbuild sẽ tự động tạo ra file `app.css` và import vào file `app.js`. Tuy nhiên, điều đó chỉ có thể thực hiện được ở server. Do vậy, với project bundle ở trên browser, cách này sẽ báo lỗi.
+
+Hiện tại, project thực hiện bundle ở trên browser nên không thể thực hiện theo cách trên. Do đó, chúng ta cần custom lại một chút để có thể import được file css.
+
+Ý tưởng là sau khi tải được data (với content là css) từ api, chúng ta sẽ bọc toàn bộ file css vào trong một thẻ script. Thẻ này được đính vào file JS. Cuối cùng chúng ta chỉ cần bundle các file js là đạt được mục tiêu.
+
+```
+const escaped = data
+    .replace(/\n/g, "")
+    .replace(/"/g, '\\"')
+    .replace(/'/g, "\\'");
+
+const contents = `
+    const style = document.createElement('style');
+    style.innerText = '${escaped}';
+    document.head.appendChild(style);
+`;
+
+return {
+    contents,
+    ...
+}
+```
