@@ -79,3 +79,41 @@ Ví dụ: import thư viện react sẽ khác với import thư viện css. Impo
 - `namespace`: có value là string, method có config thuộc tính `namespace` chỉ được áp dụng với các file được đánh dấu với `namespace` tương ứng.
 
 Trong method `onResolve`, sau khi tìm thấy file nó sẽ return về object để mô tả file này với các thông số như `{ path: "", namespace: ""}`. Thông số `namespace` này sẽ được check lại ở method `onLoad`.
+
+###### Một số vấn đề khi xử lý đường dẫn
+
+1. Xử lý đường dẫn tương đối
+
+Trong các module, chúng ta dễ dàng bắt gặp các đường dẫn tương đối như sau:
+
+```
+'./utils'
+'../assets/img1.png'
+```
+
+Để ESModule có thể xác định chính xác đường dẫn tuyệt đối của các file, ta có thể sử dụng `URL constructor`.
+
+Sử dụng constructor của URL giúp chúng ta tạo ra URL mới dựa vào đường dẫn tương đối và baseURL.
+
+**Link tham khảo: !(https://developer.mozilla.org/en-US/docs/Web/API/URL/URL)**
+
+Một số package demo để có thể check tất cả các loại đường dẫn:
+
+`https://www.unpkg.com/tiny-test-pkg`
+`https://www.unpkg.com/medium-test-pkg`
+
+2. File index nằm trong một nested folder
+
+Tham khảo tại package `https://www.unpkg.com/nested-test-pkg`.
+
+Logic để xác định đúng đường dẫn như sau:
+
+- Đối với file chính của package:
+  `https://www.unpkg.com/` + `package_name` --> `https://www.unpkg.com/nested-test-pkg`
+
+- Đối với các file còn lại:
+  `https://www.unpkg.com/` + `đường dẫn của file vừa được tải về` + `đường dẫn tương đối cho file cần tải` --> `https://www.unpkg.com/nested-test-pkg/src/helpers/utils.js`
+
+Để lấy được đường dẫn chính xác của file vừa tải, trong method onLoad, sử dụng `request` object được trả về sau khi call api. Sau đó return thêm một key `resolveDir`.
+
+Trong method `onResolve` sẽ nhận được thêm key này trong tham số `args`.
