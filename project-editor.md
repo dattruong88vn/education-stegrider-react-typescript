@@ -44,8 +44,8 @@ Ngoài ra, có một vấn đề là `Webpack` không thể hoạt động trên
 ###### Thư viện ESBUILD
 
 1. Cài đặt: `npm i esbuild-wasm`.
-2. Copy file `esbuild.wasm` từ node-modules vào thư mục public. Mục đích để có thể sử dụng esbuild trên browser.
-3. Cấu hình theo file `index.tsx` để có thể transpile được js code (sử dụng method `transform`).
+2. Copy file `esbuild.wasm` từ node-modules vào thư mục public. Mục đích để có thể sử dụng esbuild trên browser (có thể sử dụng file esbuild.wasm từ website unpkg.com: `https://unpkg.com/esbuild-wasm@0.8.27/esbuild.wasm`.
+3. Cấu hình theo file `index.tsx` để có thể transpile được js code.
 
 ###### Bundle trên Browser
 
@@ -201,4 +201,22 @@ return {
     contents,
     ...
 }
+```
+
+###### Lưu ý thêm về onLoad function
+
+`onLoad` function có thể trả về một giá trị null, điều này được esbuild chấp nhận và không báo lỗi.
+
+Khi đó, esbuild sẽ tự động thực hiện các `onLoad` function khác đến khi nào nhận được một object với thông tin `loader`, `contents` hay `resolveDir`.
+
+Tận dụng tính năng này, chúng ta tách phần caching vào 1 function onLoad riêng
+
+```
+build.onLoad({ filter: /.*/ }, async (args: esbuild.OnLoadArgs) => {
+    const cached = await fileCached.getItem<esbuild.OnLoadResult>(
+        args.path
+    );
+
+    return cached;
+});
 ```
