@@ -1,7 +1,7 @@
 import axios from "axios";
 import * as esbuild from "esbuild-wasm";
 
-export const unpkgPathPlugin = () => {
+export const unpkgPathPlugin = (content: string) => {
   return {
     name: "unpkg-path-plugin",
     setup(build: esbuild.PluginBuild) {
@@ -35,10 +35,7 @@ export const unpkgPathPlugin = () => {
         if (args.path === "index.js") {
           return {
             loader: "jsx",
-            contents: `
-              const message = require('nested-test-pkg');
-              console.log(message);
-            `,
+            contents: content,
           };
         }
 

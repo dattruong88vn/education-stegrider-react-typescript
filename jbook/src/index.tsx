@@ -32,7 +32,11 @@ const App = () => {
       entryPoints: ["index.js"],
       bundle: true,
       write: false,
-      plugins: [unpkgPathPlugin()],
+      plugins: [unpkgPathPlugin(input)],
+      define: {
+        "process.env.NODE_ENV": "'production'",
+        global: "window",
+      },
     });
 
     setCode(data.outputFiles[0].text);

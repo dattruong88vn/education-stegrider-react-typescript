@@ -80,7 +80,7 @@ Ví dụ: import thư viện react sẽ khác với import thư viện css. Impo
 
 Trong method `onResolve`, sau khi tìm thấy file nó sẽ return về object để mô tả file này với các thông số như `{ path: "", namespace: ""}`. Thông số `namespace` này sẽ được check lại ở method `onLoad`.
 
-###### Một số vấn đề khi xử lý đường dẫn
+###### Một số vấn đề
 
 1. Xử lý đường dẫn tương đối
 
@@ -117,3 +117,16 @@ Logic để xác định đúng đường dẫn như sau:
 Để lấy được đường dẫn chính xác của file vừa tải, trong method onLoad, sử dụng `request` object được trả về sau khi call api. Sau đó return thêm một key `resolveDir`.
 
 Trong method `onResolve` sẽ nhận được thêm key này trong tham số `args`.
+
+3. Biến môi trường
+
+Một số package có truy cập đến các biến global như `process.env.NODE_ENV` hay `global`. Khi bundle bằng ESModule, các biến này chưa tồn tại nên sẽ gặp warning cho các trường hợp này.
+
+Để fix các warning, ta sử dụng một tính năng được built-in trong ESModule đó là `define`. Ta thêm một option `define` khi chạy hàm `build`. Option này là một object, key-value của object này đều là string. Key đại diện cho biến global, value là giá trị tương ứng
+
+```
+define: {
+    "process.env.NODE_ENV": "production",
+    global: "window",
+},
+```
