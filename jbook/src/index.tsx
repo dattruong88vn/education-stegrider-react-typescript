@@ -67,7 +67,13 @@ const App = () => {
       <head>
         <script>
           window.addEventListener('message', event => {
-            window.eval(event.data);
+            try {
+              window.eval(event.data);
+            } catch(err) {
+              const ele = document.querySelector('#root');
+              ele.innerHTML = '<div style="color: red;"><h4>Runtime Error</h4>' + err + '</div>';
+              console.error(err);
+            }
           }, false)
         </script>
       </head>
