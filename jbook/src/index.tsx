@@ -7,7 +7,6 @@ import { unpkgPathPlugin } from "./plugins/unpkg-path-plugin";
 const App = () => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const [input, setInput] = useState("");
-  const [code, setCode] = useState("");
 
   const serviceRef = useRef<esbuild.Service | null>(null);
 
@@ -23,12 +22,14 @@ const App = () => {
   };
 
   const handleTranspile = async () => {
-    if (!serviceRef.current) return;
+    if (!serviceRef.current || !iframeRef.current) return;
 
     // const data = await serviceRef.current.transform(input, {
     //   loader: "jsx",
     //   target: "es2015",
     // });
+
+    iframeRef.current.srcdoc = html;
 
     const data = await serviceRef.current.build({
       entryPoints: ["index.js"],
@@ -40,8 +41,6 @@ const App = () => {
         global: "window",
       },
     });
-
-    setCode(data.outputFiles[0].text);
 
     // create message
     iframeRef.current?.contentWindow?.postMessage(
@@ -94,7 +93,6 @@ const App = () => {
       <div>
         <button onClick={handleTranspile}>Submit</button>
       </div>
-      <pre>{code}</pre>
       <iframe
         ref={iframeRef}
         sandbox="allow-scripts"
