@@ -43,6 +43,12 @@ const App = () => {
     setCode(data.outputFiles[0].text);
   };
 
+  const html = `
+    <script>
+      ${code}
+    </script>
+  `;
+
   return (
     <div>
       <textarea
@@ -55,6 +61,7 @@ const App = () => {
         <button onClick={handleTranspile}>Submit</button>
       </div>
       <pre>{code}</pre>
+      <iframe sandbox="allow-scripts" srcDoc={html} title="execute-code" />
     </div>
   );
 };
