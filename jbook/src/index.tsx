@@ -5,6 +5,7 @@ import { fetchPlugin } from "./plugins/fetch-plugin";
 import { unpkgPathPlugin } from "./plugins/unpkg-path-plugin";
 
 const App = () => {
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const [input, setInput] = useState("");
   const [code, setCode] = useState("");
 
@@ -41,12 +42,39 @@ const App = () => {
     });
 
     setCode(data.outputFiles[0].text);
+
+    // create message
+    iframeRef.current?.contentWindow?.postMessage(
+      data.outputFiles[0].text,
+      "*"
+    );
   };
 
+  // Cách 1: dùng thuộc tính srcDoc của thẻ iframe để truyền dữ liệu. Cách này có nguy cơ gây 2 lỗi như sau:
+  // 1. content của thẻ script quá dài
+  // 2. content của thẻ script có chứa thẻ đóng <script> --> ngắt content thành 2 phần --> gây lỗi
+  // const html = `
+  //   <script>
+  //     ${code}
+  //   </script>
+  // `;
+
+  // Cách 2: dùng postMessage để gửi data vào iframe
+  // 1. Thêm event vào content của iframe
+  // 2. Khi bấm submit, bundle code và tạo message event. Sử dụng useRef để tham chiếu đến thẻ iframe để tạo postMessage
   const html = `
-    <script>
-      ${code}
-    </script>
+    <html>
+      <head>
+        <script>
+          window.addEventListener('message', event => {
+            window.eval(event.data);
+          }, false)
+        </script>
+      </head>
+      <body>
+        <div id="root"></div>
+      </body>
+    </html>
   `;
 
   return (
@@ -61,7 +89,12 @@ const App = () => {
         <button onClick={handleTranspile}>Submit</button>
       </div>
       <pre>{code}</pre>
-      <iframe sandbox="allow-scripts" srcDoc={html} title="execute-code" />
+      <iframe
+        ref={iframeRef}
+        sandbox="allow-scripts"
+        srcDoc={html}
+        title="execute-code"
+      />
     </div>
   );
 };

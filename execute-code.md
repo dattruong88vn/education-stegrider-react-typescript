@@ -30,7 +30,7 @@ Tham khảo các website edit code online như `codesandbox`, `codepen` thì t�
 
 Thẻ `iframe` tạo ra một document khác bên trong document hiện tại, 2 context này thực thi code javascript độc lập với nhau.
 
-Tuy nhiên, giữa document cha và thẻ iframe vẫn có thể tương tác được với nhau khi thoả 2 điều kiện sau:
+Tuy nhiên, giữa document cha và thẻ iframe vẫn có thể tương tác được với object window của nhau khi thoả 2 điều kiện sau:
 
 1. Thẻ `iframe` có KO có attribute `sanbox` hoặc có giá trị `sanbox="allow-same-origin"`
 2. Parent HTML và iframe có chung Domain, Port và Protocol (http hoặc https);
@@ -42,6 +42,28 @@ Cách tương tác như sau:
 
 Khi sử dụng iframe, các vấn đề ở trên đều được giải quyết bởi vì tất các code Javascript được thực hiện ở iframe và không liên quan đến parent document.
 
-### Lưu ý khác
+### Các vấn đề khác
 
-Để iframe có thể nhận được code Javascript từ document cha, sử dụng thuộc tính `srcDocs` của iframe element, đồng thời set giá trị của thuộc tính `sandbox="allow-scripts"`
+- Để iframe có thể nhận được code Javascript từ document cha, sử dụng thuộc tính `srcDocs` của iframe element, đồng thời set giá trị của thuộc tính `sandbox="allow-scripts"`.
+
+- Khi sử dụng thuộc tính `srcDocs` của thẻ iframe để truyền JS, tất cả code sau khi bundle sẽ được đưa vào thuộc tính này và nó có nguy cơ gây lỗi nếu string code bundle quá dài (trường hợp chúng ta import những package có dung lượng lớn).
+
+- Cách truyền code JS vào thẻ iframe là tạo một content HTML với cấu trúc như sau.
+
+```
+const html = `
+    <script>
+        ${code}
+    </script>
+`
+```
+
+Tuy nhiên, trong một số thư viện có thể xuất hiện thẻ đóng mở `<script>...<script>`. Dẫn đến content của biến html sẽ bị chia làm 2, một phần vẫn hiển thị đúng trong thẻ `<script>`, phần còn lại sẽ hiển trị như là html content bên trong body.
+
+Ví dụ: `import ReactDOM from 'react-dom'` --> sẽ gặp lỗi như trên.
+
+**Để xử lý 2 lỗi ở trên, ta phải thay đổi cách tương tác giữa parent document và iframe.**
+
+Mặc dù chúng ta đã thêm thuộc tính `sandbox="allow-scripts"` vào thẻ iframe nhằm mục đích chỉ cho phép tương tác bằng script giữa parent và iframe, tuy nhiên vẫn còn 1 cách khác để có thể tương tác và truyền dữ liệu. Đó là sử dụng `window.postMessage()` function.
+
+Trong thẻ iframe, addEventListener `message`, sau đó từ parent document sử dụng postMessage để truyền code content vào thẻ iframe, đoạn code này ko có thẻ đóng mở script như cách dùng thuộc tính `srcDoc`.
