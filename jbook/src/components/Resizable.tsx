@@ -1,37 +1,57 @@
-import { ResizableBox, ResizeHandle } from "react-resizable";
+import { useEffect, useState } from "react";
+import { ResizableBox, ResizableProps } from "react-resizable";
 import "../styles/resizable.css";
 
-interface ResizableProps {
+interface ResizablePropsType {
   children: React.ReactNode;
   axis: "x" | "y";
-  resizeHandles: ResizeHandle[] | undefined;
-  height: number;
-  width: number;
-  className?: string;
-  maxConstraints?: [number, number];
-  minConstraints?: [number, number];
 }
 
-const Resizable: React.FC<ResizableProps> = ({
-  children,
-  axis,
-  resizeHandles,
-  height,
-  width,
-  className,
-  maxConstraints,
-  minConstraints,
-}) => {
+const Resizable: React.FC<ResizablePropsType> = ({ children, axis }) => {
+  let resizableProps: ResizableProps;
+  const [windowDimensions, setWindowDimensions] = useState({
+    innerHeight: window.innerHeight,
+    innerWidth: window.innerWidth,
+  });
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResizeWindow);
+
+    return () => {
+      window.removeEventListener("resize", handleResizeWindow);
+    };
+  }, []);
+
+  const handleResizeWindow = () => {
+    setWindowDimensions({
+      innerWidth: window.innerWidth,
+      innerHeight: window.innerHeight,
+    });
+  };
+
+  const { innerWidth, innerHeight } = windowDimensions;
+
+  if (axis === "x") {
+    resizableProps = {
+      className: "flex",
+      minConstraints: [innerWidth * 0.2, Infinity],
+      maxConstraints: [innerWidth * 0.9, Infinity],
+      height: Infinity,
+      width: innerWidth * 0.75,
+      resizeHandles: ["e"],
+    };
+  } else {
+    resizableProps = {
+      minConstraints: [Infinity, 24],
+      maxConstraints: [Infinity, innerHeight * 0.9],
+      height: 200,
+      width: Infinity,
+      resizeHandles: ["s"],
+    };
+  }
+
   return (
-    <ResizableBox
-      height={height}
-      width={width}
-      axis={axis}
-      resizeHandles={resizeHandles}
-      className={className}
-      maxConstraints={maxConstraints}
-      minConstraints={minConstraints}
-    >
+    <ResizableBox axis={axis} {...resizableProps}>
       {children}
     </ResizableBox>
   );
