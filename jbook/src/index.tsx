@@ -85,13 +85,7 @@ const App = () => {
 
   return (
     <div>
-      <CodeEditor />
-      <textarea
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        cols={30}
-        rows={10}
-      ></textarea>
+      <CodeEditor value={input} onChange={(value) => setInput(value || "")} />
       <div>
         <button onClick={handleTranspile}>Submit</button>
       </div>

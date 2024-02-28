@@ -8,5 +8,5 @@
 
 3. Monaco Editor: khó sử dụng nhất trong 3 loại, nhưng hỗ trợ rất nhiều tính năng.
 
-`npm install --save-exact @monaco-editor/react@3.7.5`
+`npm install @monaco-editor/react`
 `npm install monaco-editor`
