@@ -23,7 +23,7 @@ const CodeCell = () => {
       const data = await bundle(input);
 
       setCode(data);
-    }, 500);
+    }, 1000);
 
     return () => {
       clearTimeout(timer);
