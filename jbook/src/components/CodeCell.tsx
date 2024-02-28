@@ -9,6 +9,7 @@ let timer: ReturnType<typeof setTimeout>;
 const CodeCell = () => {
   const [input, setInput] = useState("");
   const [code, setCode] = useState("");
+  const [err, setErr] = useState("");
 
   // const handleTranspile = async () => {
   //   const data = await bundle(input);
@@ -20,9 +21,10 @@ const CodeCell = () => {
     if (timer) clearTimeout(timer);
 
     timer = setTimeout(async () => {
-      const data = await bundle(input);
+      const output = await bundle(input);
 
-      setCode(data);
+      setCode(output.code);
+      setErr(output.err);
     }, 1000);
 
     return () => {
@@ -40,7 +42,7 @@ const CodeCell = () => {
               onChange={(value) => setInput(value || "")}
             />
           </Resizable>
-          <Preview code={code} />
+          <Preview code={code} bundleErr={err} />
         </div>
       </Resizable>
     </div>
