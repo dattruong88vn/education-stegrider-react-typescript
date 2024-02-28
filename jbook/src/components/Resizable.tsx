@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { ResizableBox, ResizableProps } from "react-resizable";
+import {
+  ResizableBox,
+  ResizableProps,
+  ResizeCallbackData,
+} from "react-resizable";
 import "../styles/resizable.css";
 
 interface ResizablePropsType {
@@ -9,12 +13,29 @@ interface ResizablePropsType {
 
 const Resizable: React.FC<ResizablePropsType> = ({ children, axis }) => {
   let resizableProps: ResizableProps;
-  const [windowDimensions, setWindowDimensions] = useState({
+  const [dimensions, setDimensions] = useState({
     innerHeight: window.innerHeight,
     innerWidth: window.innerWidth,
+    editorWidth: window.innerWidth * 0.75,
   });
 
   useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    const handleResizeWindow = () => {
+      if (timer) clearTimeout(timer);
+
+      timer = setTimeout(() => {
+        setDimensions({
+          innerWidth: window.innerWidth,
+          innerHeight: window.innerHeight,
+          editorWidth:
+            window.innerWidth * 0.75 < dimensions.editorWidth
+              ? window.innerWidth * 0.75
+              : dimensions.editorWidth,
+        });
+      }, 500);
+    };
+
     window.addEventListener("resize", handleResizeWindow);
 
     return () => {
@@ -22,14 +43,7 @@ const Resizable: React.FC<ResizablePropsType> = ({ children, axis }) => {
     };
   }, []);
 
-  const handleResizeWindow = () => {
-    setWindowDimensions({
-      innerWidth: window.innerWidth,
-      innerHeight: window.innerHeight,
-    });
-  };
-
-  const { innerWidth, innerHeight } = windowDimensions;
+  const { innerWidth, innerHeight, editorWidth } = dimensions;
 
   if (axis === "x") {
     resizableProps = {
@@ -37,8 +51,16 @@ const Resizable: React.FC<ResizablePropsType> = ({ children, axis }) => {
       minConstraints: [innerWidth * 0.2, Infinity],
       maxConstraints: [innerWidth * 0.9, Infinity],
       height: Infinity,
-      width: innerWidth * 0.75,
+      width: editorWidth,
       resizeHandles: ["e"],
+      onResizeStop: (_, data: ResizeCallbackData) => {
+        const width = data.size.width;
+        setDimensions({
+          ...dimensions,
+          innerWidth: width / 0.75,
+          editorWidth: width,
+        });
+      },
     };
   } else {
     resizableProps = {
