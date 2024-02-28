@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import "../styles/preview.css";
 
 interface PreviewPropsType {
   code: string;
@@ -7,6 +8,11 @@ interface PreviewPropsType {
 const html = `
     <html>
       <head>
+        <style>
+          html {
+            background-color: white;
+          }
+        </style>
         <script>
           window.addEventListener('message', event => {
             try {
@@ -38,7 +44,16 @@ const Preview: React.FC<PreviewPropsType> = ({ code }) => {
     iframeRef.current.contentWindow?.postMessage(code, "*");
   }, [code]);
 
-  return <iframe ref={iframeRef} sandbox="allow-scripts" title="preview" />;
+  return (
+    <div className="preview-wrapper">
+      <iframe
+        style={{ background: "white", flexGrow: 1 }}
+        ref={iframeRef}
+        sandbox="allow-scripts"
+        title="preview"
+      />
+    </div>
+  );
 };
 
 export default Preview;
