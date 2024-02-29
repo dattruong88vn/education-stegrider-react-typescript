@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import bundle from "../bundler";
-import CodeEditor from "../components/CodeEditor";
-import Preview from "../components/Preview";
-import Resizable from "./Resizable";
+import bundle from "../../bundler";
+import Resizable from "../resizable/Resizable";
+import CodeEditor from "./CodeEditor";
+import Preview from "./Preview";
 
 let timer: ReturnType<typeof setTimeout>;
 

@@ -1,11 +1,12 @@
 import ReactDOM from "react-dom/client";
-import CodeCell from "./components/CodeCell";
-import "./styles/base.css";
+import "../src/styles/base.css";
+import TextEditor from "./components/textEditor/TextEditor";
 
 const App = () => {
   return (
     <div>
-      <CodeCell />
+      {/* <CodeCell /> */}
+      <TextEditor />
     </div>
   );
 };
