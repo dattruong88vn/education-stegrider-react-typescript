@@ -2,15 +2,14 @@ import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 
 import "../src/styles/base.css";
-import TextEditor from "./components/textEditor/TextEditor";
+import CellList from "./components/cellList/cellList";
 import store from "./state/store";
 
 const App = () => {
   return (
     <Provider store={store}>
       <div>
-        {/* <CodeCell /> */}
-        <TextEditor />
+        <CellList />
       </div>
     </Provider>
   );

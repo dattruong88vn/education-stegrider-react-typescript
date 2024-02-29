@@ -2,7 +2,7 @@ import MonacoEditor from "@monaco-editor/react";
 import "bulmaswatch/superhero/bulmaswatch.min.css";
 import prettier from "prettier";
 import parser from "prettier/parser-babel";
-import "../styles/code-editor.css";
+import "../../styles/code-editor.css";
 
 interface CodeEditorPropsType {
   value: string;
