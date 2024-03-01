@@ -38,6 +38,10 @@ const reducer = produce((state: CellsState = initialState, action: Action) => {
 
     case ActionType.DELETE_CELL:
       delete state.data[action.payload];
+      // delete in data
+      const indexDelete = state.order.findIndex((id) => id === action.payload);
+      // delete in order
+      if (indexDelete !== -1) state.order.splice(indexDelete, 1);
       return state;
 
     case ActionType.MOVE_CELL:

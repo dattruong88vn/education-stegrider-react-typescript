@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import bundle from "../../bundler";
-import { useActions } from "../../hooks/useAction";
-import { Cell } from "../../state";
-import Resizable from "../resizable/Resizable";
+import bundle from "../bundler";
+import { useActions } from "../hooks/useAction";
+import { Cell } from "../state";
 import CodeEditor from "./CodeEditor";
 import Preview from "./Preview";
+import Resizable from "./Resizable";
 
 let timer: ReturnType<typeof setTimeout>;
 

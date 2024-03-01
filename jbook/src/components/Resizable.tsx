@@ -4,7 +4,7 @@ import {
   ResizableProps,
   ResizeCallbackData,
 } from "react-resizable";
-import "../../styles/resizable.css";
+import "src/styles/resizable.css";
 
 interface ResizablePropsType {
   children: React.ReactNode;
