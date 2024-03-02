@@ -17,16 +17,38 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
   const { updateCell, createBundle } = useActions();
   const bundle = useTypedSelector((state) => state.bundle[cell.id]);
 
+  const cumulative =
+    useTypedSelector((state) => {
+      const { data, order } = state.cells;
+
+      // get all cell (include code and text)
+      const orderedCells = order.map((id) => data[id]);
+      // get code from first cell to current cell
+      let cumulativeCode = [];
+
+      for (let c of orderedCells) {
+        if (c.type === "code") {
+          cumulativeCode.push(c.content);
+
+          // stop when reach current cell
+          if (c.id === cell.id) {
+            break;
+          }
+        }
+      }
+      return cumulativeCode;
+    }) || [];
+
   useEffect(() => {
     if (!bundle) {
-      createBundle(cell.id, cell.content);
+      createBundle(cell.id, cumulative.join("\n"));
       return;
     }
 
     if (timer) clearTimeout(timer);
 
     timer = setTimeout(async () => {
-      createBundle(cell.id, cell.content);
+      createBundle(cell.id, cumulative.join("\n"));
     }, 1000);
 
     return () => {
