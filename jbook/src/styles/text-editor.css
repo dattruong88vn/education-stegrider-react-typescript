@@ -71,3 +71,7 @@
   padding: 30px;
   border: 1px solid gray;
 }
+
+.wmde-markdown {
+  background-color: transparent;
+}

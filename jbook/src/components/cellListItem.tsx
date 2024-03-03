@@ -17,13 +17,13 @@ const CellListItem: React.FC<CellListItemProps> = ({ cell }) => {
         <div className="action-bar-wrapper">
           <ActionBar id={cell.id} />
         </div>
-        <CodeCell cell={cell} />;
+        <CodeCell cell={cell} />
       </>
     );
   } else {
     child = (
       <>
-        <TextEditor cell={cell} />;
+        <TextEditor cell={cell} />
         <ActionBar id={cell.id} />
       </>
     );
