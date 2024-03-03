@@ -1,11 +1,12 @@
 import { useEffect } from "react";
+import { useCumulativeCode } from "src/hooks/useCumulativeCode";
+import { useTypedSelector } from "src/hooks/useTypeSelector";
+import "src/styles/code-cell.css";
 import { useActions } from "../hooks/useAction";
 import { Cell } from "../state";
 import CodeEditor from "./CodeEditor";
 import Preview from "./Preview";
 import Resizable from "./Resizable";
-import { useTypedSelector } from "src/hooks/useTypeSelector";
-import "src/styles/code-cell.css";
 
 let timer: ReturnType<typeof setTimeout>;
 
@@ -17,43 +18,24 @@ const CodeCell: React.FC<CodeCellProps> = ({ cell }) => {
   const { updateCell, createBundle } = useActions();
   const bundle = useTypedSelector((state) => state.bundle[cell.id]);
 
-  const cumulative =
-    useTypedSelector((state) => {
-      const { data, order } = state.cells;
-
-      // get all cell (include code and text)
-      const orderedCells = order.map((id) => data[id]);
-      // get code from first cell to current cell
-      let cumulativeCode = [];
-
-      for (let c of orderedCells) {
-        if (c.type === "code") {
-          cumulativeCode.push(c.content);
-
-          // stop when reach current cell
-          if (c.id === cell.id) {
-            break;
-          }
-        }
-      }
-      return cumulativeCode;
-    }) || [];
+  const cumulative = useCumulativeCode(cell.id);
 
   useEffect(() => {
     if (!bundle) {
-      createBundle(cell.id, cumulative.join("\n"));
+      createBundle(cell.id, cumulative);
       return;
     }
 
     if (timer) clearTimeout(timer);
 
     timer = setTimeout(async () => {
-      createBundle(cell.id, cumulative.join("\n"));
+      createBundle(cell.id, cumulative);
     }, 1000);
 
     return () => {
       clearTimeout(timer);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cell.content, cell.id, createBundle]);
 
   return (
