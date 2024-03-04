@@ -70,9 +70,11 @@ Các folder name của project bao gồm:
 
 Khi sử dụng thư viện Lerna, chúng ta không phải install các package bằng câu lệnh npm. Thay vào đó, chúng ta sử dụng câu lệnh `lurna add <package-name>`.
 
-### Build Package CLI
+### Cài đặt thư viện cho project
 
 Cài đặt thư viện `commander` để build CLI project: `lerna add commander --scope=cli`. Option `--scope=` chỉ định cho Lerna biết cài đặt package vào project nào, nếu ko có sẽ cài vào tất cả project bên trong lerna.
+
+### Run các project cùng lúc
 
 Để có thể run tất cả các project cùng lúc bên trong thư mục Lerna, thực hiện như sau:
 
