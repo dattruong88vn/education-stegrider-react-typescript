@@ -75,8 +75,8 @@ Khi tạo một command như trên, thư viện `commander` tự handle các opt
 - serve jbook.js -p 4000
 - serve --port 4000 jbook.js
 - serve -p 4000 jbook.js
-- serve --port:4000 jbook.js
-- serve -p:4000 jbook.js
+- serve --port=4000 jbook.js
+- serve -p4000 jbook.js
 
 ###### Register Command với Node
 
@@ -85,3 +85,34 @@ Khi tạo một command như trên, thư viện `commander` tự handle các opt
 2. Thêm command vào program: `program.addCommand(serveCommand);`
 
 3. Lắng nghe command trong terminal: `program.parse(process.argv);`
+
+### Connect CLI và Local API
+
+###### Phân tich
+
+1. Từ `local-api` export function `serve`.
+
+Function này sẽ nhận vào 3 tham số, lần lượt là:
+
+- port
+- filename
+- dir: đường dẫn đến file
+
+2. Trong `cli`, import function serve. Đồng thời register command serve như ở trên lấy ra thông tin `port` và `filename`, đồng thời chúng ta define thêm đường dẫn. Sau đó thực thi function `serve` với 3 đối số này.
+
+###### Xử lý folder trong filename
+
+Một số trường hợp, khi user nhập filename trong command sẽ bao gồm thư mục chứa file đó.
+
+Ví dụ: `server abc/abc.js`
+
+Chúng ta phải xử lý chính xác `filename` và `dir` trước khi thực thi function `serve`.
+
+Sử dụng built-in package của node: `path`
+
+- a: Lấy đường dẫn tuyệt đối của thư mục user gõ command: `process.cwd()`
+- b: Lấy thư mục (nếu có) trong command user nhập vào: `path.dirname(filename)`
+- c: Lấy tên filename trong command user nhập vào: `path.basename(filename)`
+
+Sử dụng `path.join()` để kết hợp 2 đường dẫn ở mục a và b --> `dir`
+Muc c chính là `filename`.
