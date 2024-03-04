@@ -73,3 +73,8 @@ Khi sử dụng thư viện Lerna, chúng ta không phải install các package 
 ### Build Package CLI
 
 Cài đặt thư viện `commander` để build CLI project: `lerna add commander --scope=cli`. Option `--scope=` chỉ định cho Lerna biết cài đặt package vào project nào, nếu ko có sẽ cài vào tất cả project bên trong lerna.
+
+Để có thể run tất cả các project cùng lúc bên trong thư mục Lerna, thực hiện như sau:
+
+- Trong thư mục root, file package.json của `lenar` thêm vào script: `  "start": "lerna run start --parallel"`.
+- Script này sẽ thực thi script `npm start` của tất cả các project bên trong nó.
