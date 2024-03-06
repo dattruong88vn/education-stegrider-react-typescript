@@ -1,5 +1,5 @@
+import { serve } from "@edu-jsnote/local-api";
 import { Command } from "commander";
-import { serve } from "local-api";
 import path from "path";
 
 interface LocalApiError {

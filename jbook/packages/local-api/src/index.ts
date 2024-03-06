@@ -26,7 +26,9 @@ export const serve = (
     );
   } else {
     // use react app build folder package - user machine
-    const packagePath = require.resolve("local-client/build/index.html");
+    const packagePath = require.resolve(
+      "@edu-jsnote/local-client/build/index.html"
+    );
     app.use(express.static(path.dirname(packagePath)));
   }
 
