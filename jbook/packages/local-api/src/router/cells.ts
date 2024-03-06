@@ -41,9 +41,7 @@ export const createCellsRouter = (filename: string, dir: string) => {
 
   router.post("/cells", async (req, res) => {
     const { cells }: { cells: Cell[] } = req.body;
-
     await fs.writeFile(fullPath, JSON.stringify(cells), "utf-8");
-
     res.send({ status: "ok" });
   });
 

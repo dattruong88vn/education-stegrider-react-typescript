@@ -99,6 +99,7 @@ export const saveCells = () => {
     } = getState();
 
     const cells = order.map((id) => data[id]);
+    console.log({ data, cells });
 
     try {
       await axios.post("/cells", { cells });

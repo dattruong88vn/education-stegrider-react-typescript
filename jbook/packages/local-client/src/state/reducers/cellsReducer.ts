@@ -93,7 +93,7 @@ const reducer = produce((state: CellsState = initialState, action: Action) => {
       state.error = null;
       state.order = action.payload.map((cell) => cell.id);
 
-      action.payload.reduce((acc, cell) => {
+      state.data = action.payload.reduce((acc, cell) => {
         acc[cell.id] = cell;
         return acc;
       }, {} as CellsState["data"]);
